@@ -29,7 +29,8 @@ CREATE TABLE IF NOT EXISTS precos_placas_video (
     preco NUMERIC,
     marca TEXT,
     capacidade TEXT,
-    data_coleta TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    data_coleta TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE (produto, preco, data_coleta)
 );
 ''')
 
