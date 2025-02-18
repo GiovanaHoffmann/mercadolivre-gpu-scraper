@@ -12,17 +12,31 @@ headers = {
 }
 
 # Lista de marcas mais comuns
-marcas_conhecidas = ["NVIDIA", "AMD", "Intel", "ASUS", "Gigabyte", "MSI", "EVGA", "Zotac", "XFX", "Sapphire", "PowerColor", "Geforce"]
+marcas_conhecidas = {
+    "NVIDIA": ["NVIDIA", "Geforce"],
+    "AMD": ["AMD"],
+    "Intel": ["Intel"],
+    "ASUS": ["ASUS"],
+    "Gigabyte": ["Gigabyte"],
+    "MSI": ["MSI"],
+    "EVGA": ["EVGA"],
+    "Zotac": ["Zotac"],
+    "XFX": ["XFX"],
+    "Sapphire": ["Sapphire"],
+    "PowerColor": ["PowerColor"]
+}
 
 def extrair_marca(titulo):
-    for marca in marcas_conhecidas:
-        if marca.lower() in titulo.lower():
-            return marca
+    titulo_lower = titulo.lower()
+    for marca, keywords in marcas_conhecidas.items():
+        for keyword in keywords:
+            if keyword.lower() in titulo_lower:
+                return marca
     return "Desconhecida"
 
 def extrair_capacidade(titulo):
-    match = re.search(r"(\d+)\s?(GB|gb|Gb)", titulo)  # regex para captura de "gb"
-    return match.group(0).upper() if match else "Não informado"
+    match = re.search(r"(\d+)\s*(GB|gb|Gb|gB)", titulo)  # regex para captura de "gb"
+    return match.group(1) + "GB" if match else "Não informado" # Remove espaço antes de "GB"
 
 # Requisição para o site
 response = requests.get(url, headers=headers)
