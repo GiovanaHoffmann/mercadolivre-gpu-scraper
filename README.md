@@ -11,16 +11,21 @@ Este projeto consiste em um pipeline de dados que realiza web scraping de preço
 - **PostgreSQL**: Banco de dados relacional para armazenar os dados coletados
 - **psycopg2**: Biblioteca para conectar o Python ao PostgreSQL
 - **dotenv**: Para gerenciamento de credenciais sensíveis
+- **unittest**: Para testes unitários
 
 ## Estrutura do Projeto
 ```
 web_scraper_project/
-│── scraper.py         # Script de web scraping
-│── pipeline.py        # Script para inserção dos dados no PostgreSQL
-│── .env               # Arquivo para armazenar credenciais do banco
-│── precos_mercadolivre.csv  # Arquivo CSV gerado pelo scraper
-│── requirements.txt   # Dependências do projeto
-│── README.md          # Documentação do projeto
+|── dados/                # Pasta para armazenar os arquivos CSV gerados
+|    ├── precos_mercadolivre_YYYY-MM-DD.csv  # Arquivo CSV gerado pelo scraper (data dinâmica)
+|── scraper.py            # Script de web scraping
+|── pipeline.py           # Script para inserção dos dados no PostgreSQL
+|── executar_pipeline.py  # Script para executar scraper.py e pipeline.py automaticamente
+|── test_scraper.py       # Testes unitários para funções de extração de dados
+|── test_pipeline.py      # Testes unitários para a inserção no banco
+|── .env                  # Arquivo para armazenar credenciais do banco
+|── requirements.txt      # Dependências do projeto
+|── README.md             # Documentação do projeto
 ```
 
 ## Como Executar o Projeto
@@ -54,24 +59,35 @@ DB_HOST=localhost
 DB_PORT=5432
 ```
 
-### 5. Executar o Web Scraper
+### 5. Executar Web Scraper e Pipeline Automaticamente
+Para realizar o scraping e inserir os dados no banco em sequência:
 ```bash
-python scraper.py
+python executar_pipeline.py
 ```
-Isso gerará um arquivo `precos_mercadolivre.csv` com os dados extraídos.
+Isso gerará um arquivo CSV dentro da pasta `dados/` e em seguida os dados serão inseridos no PostgreSQL.
 
-### 6. Executar o Pipeline de Dados
+## Testes Unitários
+O projeto inclui testes unitários para garantir que as funções críticas funcionem corretamente.
+
+### 6. Executar os Testes
 ```bash
-python pipeline.py
+python -m unittest discover
 ```
-Os dados serão inseridos no banco de dados PostgreSQL.
+Ou execute os testes individualmente:
+```bash
+python test_scraper.py
+python test_pipeline.py
+```
+
+## Armazenamento Incremental
+Para evitar sobrescrita de dados, o pipeline de inserção no banco de dados verifica se um produto já está presente antes de inseri-lo. Isso garante que os preços históricos sejam mantidos ao longo do tempo.
 
 ## Exemplo de Saída (CSV e Banco de Dados)
-| Produto | Preço | Marca | Capacidade |
-|---------|--------|--------|------------|
-| RTX 3060 | 2.499,00 | NVIDIA | 12GB |
+| Produto    | Preço   | Marca | Capacidade |
+|------------|--------|--------|------------|
+| RTX 3060  | 2.499,00 | NVIDIA | 12GB |
 | RX 6700 XT | 3.299,00 | AMD | 12GB |
 
 ---
-**Desenvolvido por Giovana Araújo Hoffmann** 
+**Desenvolvido por Giovana Araújo Hoffmann**
 
