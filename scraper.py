@@ -3,6 +3,7 @@ from bs4 import BeautifulSoup
 import pandas as pd
 import re
 from datetime import datetime
+import os
 
 url = "https://lista.mercadolivre.com.br/placa-de-video#D[A:placa%20de%20video]"
 
@@ -71,8 +72,11 @@ if response.status_code == 200:
             produtos.append([nome, preco, marca, capacidade])
 
     df = pd.DataFrame(produtos, columns=["Produto", "Preço", "Marca", "Capacidade"])
+    
     hoje = datetime.now().strftime("%Y-%m-%d")
-    df.to_csv(f"precos_mercadolivre_{hoje}.csv", index=False, encoding="utf-8")
+    pasta_destino = os.path.join("dados", f"precos_mercadolivre_{hoje}.csv")
+    
+    df.to_csv(pasta_destino, index=False, encoding="utf-8")
 
     print("✅ Dados coletados e salvos em precos_mercadolivre.csv!")
 else:

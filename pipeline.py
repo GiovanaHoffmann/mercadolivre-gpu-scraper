@@ -2,6 +2,7 @@ import pandas as pd
 import psycopg2
 from dotenv import load_dotenv
 import os
+from datetime import datetime
 
 load_dotenv()
 
@@ -11,7 +12,15 @@ DB_PASSWORD = os.getenv("DB_PASSWORD")
 DB_HOST = os.getenv("DB_HOST")
 DB_PORT = os.getenv("DB_PORT")
 
-df = pd.read_csv("precos_mercadolivre.csv")
+# Caminho da pasta de dados
+pasta_dados = "dados"
+
+# Listando os arquivos CSV na pasta 'dados' e ordenando pelo tempo de modificação
+arquivos = [f for f in os.listdir(pasta_dados) if f.startswith("precos_mercadolivre") and f.endswith(".csv")]
+arquivo_csv = max(arquivos, key=lambda f: os.path.getmtime(os.path.join(pasta_dados, f)))
+
+# Lê o arquivo CSV mais recente
+df = pd.read_csv(os.path.join(pasta_dados, arquivo_csv))
 
 conn = psycopg2.connect(
     dbname=DB_NAME,
